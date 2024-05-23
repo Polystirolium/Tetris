@@ -1,0 +1,283 @@
+#include "tetromino.h"
+
+
+int nFieldWidth = 12;
+int nFieldHeight = 22;
+
+int *pField = nullptr;
+int nElementWidth = 33;
+int nElementHeigth = 32;
+
+float runningTime{0.f};
+int frame{0};
+int maxFrame{24};
+float updateTime{1.f / 60.f};
+
+
+std::vector<std ::vector<int>> tetramino;
+
+void initTetramino()
+{
+    tetramino.push_back(
+        {0, 0, 1, 0,
+         0, 0, 1, 0,
+         0, 0, 1, 0,
+         0, 0, 1, 0});
+    tetramino.push_back(
+        {0, 0, 1, 0,
+         0, 1, 1, 0,
+         0, 1, 0, 0,
+         0, 0, 0, 0});
+    tetramino.push_back(
+        {0, 1, 0, 0,
+         0, 1, 1, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 0});
+    tetramino.push_back(
+        {0, 0, 0, 0,
+         0, 1, 1, 0,
+         0, 1, 1, 0,
+         0, 0, 0, 0});
+    tetramino.push_back(
+        {0, 0, 1, 0,
+         0, 1, 1, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 0});
+    tetramino.push_back(
+        {0, 0, 0, 0,
+         0, 1, 1, 0,
+         0, 0, 1, 0,
+         0, 0, 1, 0});
+    tetramino.push_back(
+        {0, 0, 0, 0,
+         0, 1, 1, 0,
+         0, 1, 0, 0,
+         0, 1, 0, 0});
+}
+
+void DrawField(int pX, int pY, Color bkColor, Color color)
+{
+    for (int x = 0; x < nFieldWidth; x++)
+        for (int y = 0; y < nFieldHeight; y++)
+        {
+            DrawElement(pX + x * nElementWidth, pY + y * nElementHeigth, pField[y * nFieldWidth + x], bkColor, color);
+        }
+}
+void DrawDebugField(int pX, int pY)
+{
+    for (int x = 0; x < nFieldWidth; x++)
+        for (int y = 0; y < nFieldHeight; y++)
+        {
+            DrawText(TextFormat("%2i", y * nFieldWidth + x), pX + 10 + x * 35, pY + 5 + y * 40, 15, BLUE);
+            DrawText(TextFormat("%2i", pField[y * nFieldWidth + x]), pX + x * 35, pY + 20 + (y * 40), 30, RED);
+            if (x == 0)
+            {
+                DrawText(TextFormat("%2i", y), pX - 25, pY + 25 + (y * 40), 20, GREEN);
+            }
+        }
+}
+int Rotate(int px, int py, int r)
+{
+    switch (r % 4)
+    {
+    case 0:
+        return py * 4 + px; // 0 градусов
+    case 1:
+        return 12 + py - (px * 4); // 90 градусов
+    case 2:
+        return 15 - (py * 4) - px; // 180 градусов
+    case 3:
+        return 3 - py + (px * 4); // 270 градусов
+    }
+    return 0;
+}
+
+bool DoesPieceFit(int nTetramino, int nRotation, int nPosX, int nPosY)
+{
+    for (int px = 0; px < 4; px++)
+        for (int py = 0; py < 4; py++)
+        {
+            int pi = Rotate(px, py, nRotation);
+            int fi = (nPosY + py) * (nFieldWidth) + (nPosX + px);
+
+            if (nPosX + px >= 0 && nPosX + px < nFieldWidth)
+            {
+                if (nPosY + py >= 0 && nPosY + py < nFieldHeight)
+                {
+                    if (tetramino[nTetramino][pi] == 1 && (pField[fi] != 1))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+    return true;
+}
+
+void DrawTetramino(int posX, int posY, int nRotation,
+                   int nTetramino, Color bkColor, Color color)
+{
+    for (int px = 0; px < 4; px++)
+        for (int py = 0; py < 4; py++)
+        {
+            int pi = Rotate(px, py, nRotation);
+            if (tetramino[nTetramino][pi])
+                DrawElement(posX + 32 * px, posY + 33 * py, 6, bkColor, color);
+        }
+}
+
+int main()
+{
+    const char *appName{"TETRIS"};
+    const int windowDimensioms[2] = {1920, 1080};
+    Color cBaseColor{0, 255, 0, 255};
+    Color cBkColor{0, 255, 125, 255};
+
+    InitWindow(windowDimensioms[0], windowDimensioms[1], appName);
+
+    initTetramino();
+
+    // Инициализация поля
+    pField = new int[nFieldWidth * nFieldHeight];
+    for (int x = 0; x < nFieldWidth; x++)
+        for (int y = 0; y < nFieldHeight; y++)
+        {
+            if (x == 0)
+                pField[y * nFieldWidth + x] = 2;
+            if (x == nFieldWidth - 1)
+                pField[y * nFieldWidth + x] = 3;
+            if (y == (nFieldHeight - 2) && ((x != 0) && (x != nFieldWidth - 1)))
+                pField[y * nFieldWidth + x] = 4;
+            if (y == (nFieldHeight - 1) && ((x == 0) || (x == nFieldWidth - 1)))
+                pField[y * nFieldWidth + x] = 0;
+            if (y == (nFieldHeight - 1) && ((x != 0) && (x != nFieldWidth - 1)))
+                pField[y * nFieldWidth + x] = 5;
+            if ((x > 0 && x < nFieldWidth - 1) && (y >= 0 && y < nFieldHeight - 2))
+                pField[y * nFieldWidth + x] = 1;
+        }
+
+    SetTargetFPS(60);
+
+    // Стартовые значения переменных
+    int nCurrentPiece = rand() % 7;
+    int nNextPiece = rand() % 7;
+    int nCurrentX = (nFieldWidth) / 2 - 2;
+    int nCurrentY = 0;
+    int nCurrentRotation = 0;
+    bool bLinesDelete = false;
+
+    std::vector<int> vLines;
+
+    // Игровой цикл
+    while (!WindowShouldClose())
+    {
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // Затирка тетрамино
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if (tetramino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == 1)
+                    pField[(nCurrentY + py) * (nFieldWidth) + (nCurrentX + px)] = 1;
+
+        runningTime += GetFrameTime();
+        if (runningTime >= updateTime)
+        {
+            frame++;
+            runningTime = 0.f;
+            if (frame > maxFrame)
+            {
+                frame = 0;
+
+                if (DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1))
+                {
+                    nCurrentY++;
+                }
+                else
+                {
+                    // Запись текущего тетрамино в поле
+                    for (int px = 0; px < 4; px++)
+                        for (int py = 0; py < 4; py++)
+                            if (tetramino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == 1)
+                                pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = 6;
+
+                    // Создана ли горизонтальная линия
+                    for (int py = 0; py < 4; py++)
+                    {
+                        if (nCurrentY + py < nFieldHeight - 2)
+                        {
+                            bool bLine = true;
+
+                            for (int px = 1; px < nFieldWidth - 1; px++)
+                            {
+                                if (bLine && pField[(nCurrentY + py) * nFieldWidth + px] == 6)
+                                {
+                                    bLine = true;
+                                }
+                                else
+                                {
+                                    bLine = false;
+                                }
+                            }
+
+                            // Подстановка знаков равно на место линии
+                            if (bLine)
+                            {
+                                for (int px = 1; px < nFieldWidth - 1; px++)
+                                    pField[(nCurrentY + py) * nFieldWidth + px] = 4;
+
+                                vLines.push_back(nCurrentY + py);
+                                bLinesDelete = true;
+                            }
+                        }
+                    }
+
+                    // Выбор следующего тетрамино
+                    nCurrentPiece = nNextPiece;
+                    nNextPiece = rand() % 7;
+                    nCurrentRotation = 0;
+                    nCurrentX = nFieldWidth / 2;
+                    nCurrentY = 0;
+                }
+            }
+        }
+
+        // Управление
+        nCurrentRotation += (IsKeyPressed(KEY_UP) && DoesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1 : 0;
+        nCurrentX += (IsKeyPressed(KEY_RIGHT) && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY)) ? 1 : 0;
+        nCurrentX -= (IsKeyPressed(KEY_LEFT)) && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY) ? 1 : 0;
+        nCurrentY += (IsKeyPressed(KEY_DOWN)) && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1) ? 1 : 0;
+
+        // Следующее тетрамино
+        DrawTetramino(300, 500, 0, nNextPiece, cBkColor, cBaseColor);
+
+        // Удаление линий
+        if (!vLines.empty() && bLinesDelete)
+        {
+            for (int &v : vLines)
+                for (int px = 1; px < nFieldWidth - 1; px++)
+                {
+                    for (int py = v; py > 0; py--)
+                    {
+                        pField[py * nFieldWidth + px] = pField[(py - 1) * nFieldWidth + px];
+                    }
+                    pField[px] = 1;
+                }
+            vLines.clear();
+        }
+        // Отрисовкав текущего Тетрамино
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if (tetramino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == 1)
+                    pField[(nCurrentY + py) * (nFieldWidth) + (nCurrentX + px)] = 6;
+
+        DrawField(550, 150, cBkColor, cBaseColor);
+        EndDrawing();
+    }
+
+    CloseWindow();
+
+    return 0;
+}
