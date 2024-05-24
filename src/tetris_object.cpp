@@ -158,11 +158,11 @@ void tetris_object::HoldingTimer(float deltaTime)
         nHoldingFrame++;
         holdingRunningTime = 0.f;
 
-        if (nHoldingFrame > maxFrame)
+        if (nHoldingFrame > maxFrame / 2)
         {
-
             nHoldingFrame = 0;
             bLinesDeleting = false;
+            bDeleteLines = true;
         }
     }
 }
@@ -176,10 +176,13 @@ void tetris_object::RemoveTetramino()
 
 void tetris_object::PutTetramino()
 {
-    for (int px = 0; px < 4; px++)
-        for (int py = 0; py < 4; py++)
-            if (tetramino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == 1)
-                pField[(nCurrentY + py) * nFieldWidth_ + (nCurrentX + px)] = 6;
+    if (!bLinesDeleting)
+    {
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if (tetramino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == 1)
+                    pField[(nCurrentY + py) * nFieldWidth_ + (nCurrentX + px)] = 6;
+    }
 }
 
 void tetris_object::CheckLines()
@@ -210,9 +213,47 @@ void tetris_object::CheckLines()
 
                 vLines.push_back(nCurrentY + py);
                 bLinesDeleting = true;
+
+                // Подсчёт очков
+                switch (vLines.size())
+                {
+                case 1:
+                    nScore += 40 * (nLevel + 1);
+                    break;
+                case 2:
+                    nScore += 100 * (nLevel + 1);
+                    break;
+                case 3:
+                    nScore += 300 * (nLevel + 1);
+                    break;
+                case 4:
+                    nScore += 1200 * (nLevel + 1);
+                    break;
+
+                default:
+                    nScore += 0;
+                    break;
+                }
+
+                nLines+=vLines.size();
             }
         }
     }
+}
+
+void tetris_object::DeleteLines()
+{
+    // Удаление
+    for (int &v : vLines)
+        for (int px = 1; px < nFieldWidth_ - 1; px++)
+        {
+            for (int py = v; py > 0; py--)
+            {
+                pField[py * nFieldWidth_ + px] = pField[(py - 1) * nFieldWidth_ + px];
+            }
+            pField[px] = 1;
+        }
+    vLines.clear();
 }
 
 void tetris_object::NextTetramino()
@@ -254,7 +295,7 @@ void tetris_object::Tick(float deltaTime)
 
             // Создана ли горизонтальная линия
             CheckLines();
-            // Выбор следующего тетрамино F
+            // Выбор следующего тетрамино
             NextTetramino();
         }
         // Запись тетрамино в поле
@@ -273,22 +314,33 @@ void tetris_object::Tick(float deltaTime)
         HoldingTimer(deltaTime);
     }
     // Удаление линий
-    if (!vLines.empty() && nHoldingFrame == maxFrame)
+    if (!vLines.empty() && bDeleteLines)
     {
-        for (int &v : vLines)
-            for (int px = 1; px < nFieldWidth_ - 1; px++)
-            {
-                for (int py = v; py > 0; py--)
-                {
-                    pField[py * nFieldWidth_ + px] = pField[(py - 1) * nFieldWidth_ + px];
-                }
-                pField[px] = 1;
-            }
-        vLines.clear();
-        bLinesDeleting=false;
+        DeleteLines();
+        bDeleteLines = false;
     }
 
     PutTetramino();
 
     DrawField(nFieldPosX_, nFieldPosY_, bkColor, color);
+}
+
+int tetris_object::GetScore()
+{
+    return nScore;
+}
+
+int tetris_object::GetLines()
+{
+    return nLines;
+}
+
+int tetris_object::GetLevel()
+{
+    return nLevel;
+}
+
+Color tetris_object::GetColor()
+{
+    return color;
 }

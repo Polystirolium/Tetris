@@ -1,5 +1,6 @@
 #include "tetromino.h"
 #include "tetris_object.h"
+#include "tetris_menu.h"
 
 int main()
 {
@@ -21,9 +22,13 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        tetris.Tick(GetFrameTime());
-        tetris.DrawNextTetramino(300, 500);
 
+                tetris.Tick(GetFrameTime());
+                tetris.DrawNextTetramino(300, 500);
+                DrawText(TextFormat("SCORE: %i", tetris.GetScore()), 100, 150, 30, tetris.GetColor());
+                DrawText(TextFormat("TOTAL LINES: %i", tetris.GetLines()), 100, 200, 30, tetris.GetColor());
+                DrawText(TextFormat("LEVEL: %i", tetris.GetLevel()), 100, 250, 30, tetris.GetColor());
+  
         EndDrawing();
     }
 

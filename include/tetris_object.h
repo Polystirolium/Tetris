@@ -12,6 +12,10 @@ public:
     void SetFieldPosition(int x, int y);
     void DrawNextTetramino(int posX, int posY);
     void Tick(float deltaTime);
+    int GetScore();
+    int GetLines();
+    int GetLevel();
+    Color GetColor();
     ~tetris_object();
 
 private:
@@ -43,6 +47,11 @@ private:
     int maxFrame{30};
     float updateTime{1.f / 60.f};
 
+    // Игровые параметры
+    int nScore{0};
+    int nLines{0};
+    int nLevel{0};
+
     std::vector<std ::vector<int>> tetramino;
     std::vector<int> vLines;
 
@@ -50,12 +59,14 @@ private:
     bool DoesPieceFit(int nTetramino, int nRotation, int nPosX, int nPosY);
     bool bForceDown{true};
     bool bLinesDeleting{false};
+    bool bDeleteLines{false};
     void MoveForceDown();
     void Timer(float deltaTime);
     void HoldingTimer(float deltaTime);
     void RemoveTetramino();
     void PutTetramino();
     void CheckLines();
+    void DeleteLines();
     void NextTetramino();
     void DrawField(int nFieldPosX, int nFieldPosY, Color bkColor, Color color);
 };

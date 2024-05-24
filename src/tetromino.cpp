@@ -76,12 +76,12 @@ void DrawElement(int pX, int pY, int id, Color cBkColor, Color color)
 
     case 6:
         // Скобки
-        DrawRectangle(pX + 3, pY + 2, 4, 31, color);
-        DrawRectangle(pX + 7, pY + 2, 4, 4, color);
-        DrawRectangle(pX + 7, pY + 29, 4, 4, color);
-        DrawRectangle(pX + 23, pY + 2, 4, 4, color);
-        DrawRectangle(pX + 23, pY + 29, 4, 4, color);
-        DrawRectangle(pX + 27, pY + 2, 4, 31, color);
+        DrawRectangle(pX + 2, pY + 2, 4, 28, color);
+        DrawRectangle(pX + 6, pY + 2, 4, 4, color);
+        DrawRectangle(pX + 6, pY + 26, 4, 4, color);
+        DrawRectangle(pX + 22, pY + 2, 4, 4, color);
+        DrawRectangle(pX + 22, pY + 26, 4, 4, color);
+        DrawRectangle(pX + 26, pY + 2, 4, 28, color);
 
         break;
 

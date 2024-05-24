@@ -1,5 +1,5 @@
-#ifndef TILEMAP_H
-#define TILEMAP_H
+#ifndef TETROMINO_H
+#define TETROMINO_H
 
 #include "raylib.h"
 #include "raymath.h"
