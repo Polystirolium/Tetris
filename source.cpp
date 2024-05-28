@@ -9,6 +9,8 @@ int main()
     tetris_object tetris(12, 22);
     tetris.SetFieldPosition(550, 150);
 
+    Tetris_menu tetrisMenu;
+
     InitWindow(windowDimensioms[0], windowDimensioms[1], appName);
 
     SetTargetFPS(60);
@@ -22,13 +24,14 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-
+        tetrisMenu.DrawTetrisText(0, 0);
+        /*
                 tetris.Tick(GetFrameTime());
                 tetris.DrawNextTetramino(300, 500);
                 DrawText(TextFormat("SCORE: %i", tetris.GetScore()), 100, 150, 30, tetris.GetColor());
                 DrawText(TextFormat("TOTAL LINES: %i", tetris.GetLines()), 100, 200, 30, tetris.GetColor());
                 DrawText(TextFormat("LEVEL: %i", tetris.GetLevel()), 100, 250, 30, tetris.GetColor());
-  
+        */
         EndDrawing();
     }
 
