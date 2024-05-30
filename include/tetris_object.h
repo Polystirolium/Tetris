@@ -33,6 +33,11 @@ private:
     int nCurrentY;
     int nCurrentRotation;
 
+    //Анимация
+    //Курсор
+    int nShiftX{0};
+    int nShiftY{0};
+
     // Параметры элемента
     int nElementWidth_ = 33;
     int nElementHeigth_ = 32;

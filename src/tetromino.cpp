@@ -1,6 +1,5 @@
 #include "tetromino.h"
 
-
 void DrawElement(int pX, int pY, int id, Color cBkColor, Color color)
 {
     switch (id)
@@ -76,21 +75,64 @@ void DrawElement(int pX, int pY, int id, Color cBkColor, Color color)
 
     case 6:
         // Скобки
-        DrawRectangle(pX + 2, pY + 2, 4, 28, color);
-        DrawRectangle(pX + 6, pY + 2, 4, 4, color);
-        DrawRectangle(pX + 6, pY + 26, 4, 4, color);
-        DrawRectangle(pX + 22, pY + 2, 4, 4, color);
-        DrawRectangle(pX + 22, pY + 26, 4, 4, color);
-        DrawRectangle(pX + 26, pY + 2, 4, 28, color);
+
+        DrawRectangle(pX + 2, pY + 2, 4, 28, cBkColor);
+        DrawRectangle(pX + 6, pY + 2, 4, 4, cBkColor);
+        DrawRectangle(pX + 6, pY + 26, 4, 4, cBkColor);
+        DrawRectangle(pX + 22, pY + 2, 4, 4, cBkColor);
+        DrawRectangle(pX + 22, pY + 26, 4, 4, cBkColor);
+        DrawRectangle(pX + 26, pY + 2, 4, 28, cBkColor);
+
+        DrawRectangle(pX + 3, pY + 3, 2, 26, color);
+        DrawRectangle(pX + 5, pY + 3, 4, 2, color);
+        DrawRectangle(pX + 5, pY + 27, 4, 2, color);
+
+        DrawRectangle(pX + 27, pY + 3, 2, 26, color);
+        DrawRectangle(pX + 23, pY + 3, 4, 2, color);
+        DrawRectangle(pX + 23, pY + 27, 4, 2, color);
 
         break;
 
+    case 7:
+        // Верхний левый угол
+        DrawRectangle(pX + 2, pY + 2, 4, 28, cBkColor);
+        DrawRectangle(pX + 6, pY + 2, 24, 4, cBkColor);
+
+        DrawRectangle(pX + 3, pY + 3, 2, 26, color);
+        DrawRectangle(pX + 5, pY + 3, 24, 2, color);
+        break;
+
+    case 8:
+        // Верхний правый угол
+
+        DrawRectangle(pX + 2, pY + 2, 24, 4, cBkColor);
+        DrawRectangle(pX + 26, pY + 2, 4, 28, cBkColor);
+
+        DrawRectangle(pX + 3, pY + 3, 24, 2, color);
+        DrawRectangle(pX + 27, pY + 3, 2, 26, color);
+
+        break;
+
+    case 9:
+        // Нижний левый угол
+        DrawRectangle(pX + 2, pY + 2, 4, 28, cBkColor);
+        DrawRectangle(pX + 6, pY + 26, 24, 4, cBkColor);
+
+        DrawRectangle(pX + 3, pY + 3, 2, 26, color);
+        DrawRectangle(pX + 5, pY + 27, 24, 2, color);
+
+        break;
+
+    case 10:
+        // Нижний правый угол
+        DrawRectangle(pX + 26, pY + 2, 4, 28, cBkColor);
+        DrawRectangle(pX + 2, pY + 26, 24, 4, cBkColor);
+
+        DrawRectangle(pX + 27, pY + 3, 2, 26, color);
+        DrawRectangle(pX + 3, pY + 27, 24, 2, color);
+
+        break;
     default:
         break;
     }
 }
-
-
-
-
-

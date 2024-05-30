@@ -74,12 +74,17 @@ void tetris_object::SetFieldPosition(int x, int y)
 // Отрисовка следующего тетрамино
 void tetris_object::DrawNextTetramino(int posX, int posY)
 {
+    DrawElement(posX + nShiftX, posY + nShiftY, 7, bkColor, color);
+    DrawElement(posX + 160 - nShiftX, posY + nShiftY, 8, bkColor, color);
+    DrawElement(posX + nShiftX, posY + 165 - nShiftY, 9, bkColor, color);
+    DrawElement(posX + 160 - nShiftX, posY + 165 - nShiftY, 10, bkColor, color);
+
     for (int px = 0; px < 4; px++)
         for (int py = 0; py < 4; py++)
         {
             int pi = Rotate(px, py, 0);
             if (tetramino[nNextPiece][pi])
-                DrawElement(posX + 32 * px, posY + 33 * py, 6, bkColor, color);
+                DrawElement(posX + 32 * px + 32, posY + 33 * py + 33, 6, bkColor, color);
         }
 }
 
@@ -142,6 +147,13 @@ void tetris_object::Timer(float deltaTime)
     {
         frame++;
         runningTime = 0.f;
+        
+        // Анимация курсора следущего тетрамино
+        if (nShiftX != 0)
+        {
+            nShiftX--;
+            nShiftY--;
+        }
 
         if (frame > maxFrame)
         {
@@ -235,7 +247,7 @@ void tetris_object::CheckLines()
                     break;
                 }
 
-                nLines+=vLines.size();
+                nLines += vLines.size();
             }
         }
     }
@@ -258,11 +270,17 @@ void tetris_object::DeleteLines()
 
 void tetris_object::NextTetramino()
 {
+    // Семя генератора случайных чисел
+
     nCurrentPiece = nNextPiece;
     nNextPiece = rand() % 7;
     nCurrentRotation = 0;
     nCurrentX = nFieldWidth_ / 2 - 2;
     nCurrentY = 0;
+
+    
+    nShiftX = 5;
+    nShiftY = 5;
     bForceDown = false;
 }
 

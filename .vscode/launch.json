@@ -61,7 +61,7 @@
       "stopAtEntry": false,
       "externalConsole": true,
       "cwd": "${workspaceFolder}",
-      "program": "c:/YandexDisk/Projects/CPP/Civilization/build/Debug/outDebug",
+      "program": "${workspaceFolder}/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

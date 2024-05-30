@@ -3,12 +3,14 @@
 
 #include "tetromino.h"
 
+
 class Tetris_menu
 {
 
 public:
     Tetris_menu(/* args */);
     void DrawTetrisText(int posX, int posY);
+    void DrawImg(int posX, int posY, Color baseColor);
     ~Tetris_menu();
 
 private:
@@ -16,6 +18,8 @@ private:
     void DrawT(int posX, int posY);
     void DrawE(int posX, int posY);
     void DrawR(int posX, int posY);
+    void DrawI(int posX, int posY);
+    void DrawS(int posX, int posY);
     Color bkColor{0, 255, 0, 255};
     Color color{0, 255, 125, 255};
 };
